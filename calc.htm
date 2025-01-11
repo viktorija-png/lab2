@@ -1,0 +1,137 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Калькулятор</title>
+
+<style>
+#result
+{
+	border: solid 1px black;
+	text-align: center;
+	vertical-align: middle;
+	width: 300px;
+}
+
+input,
+select
+{
+	width: 100%;
+	height: 30px;
+}
+
+#go
+{
+	background: blue;
+	color: white;
+	border: none;
+	border-radius: 10px;
+}
+
+</style>
+
+
+
+<script>
+
+var vidy = ["", "Пополняемый", "Срочный"];
+
+var sroki = [];
+sroki[ 0 ] = [];
+sroki[ 1 ] = [	{"prc":20, "name":"6 месяцев", "srok":6},  {"prc":22, "name":"1 год", "srok":12},  
+		{"prc":15, "name":"1,5 года", "srok":18},  {"prc":10, "name":"2 года", "srok":24} ];
+sroki[ 2 ] = [	{"prc":20, "name":"3 месяца", "srok":3},  {"prc":22, "name":"6 месяцев", "srok":6},  
+		{"prc":23, "name":"9 месяцев", "srok":9}, {"prc":24, "name":"1 год", "srok":12},  
+		{"prc":18, "name":"1,5 года", "srok":18},  {"prc":15, "name":"2 года", "srok":24} ];
+
+function elm( id )
+{
+	return document.getElementById( id );
+}
+
+function setSrok( vid )
+{
+	var o = elm("srok_vklada");
+
+	var arr = sroki[ vid ];
+
+	o.options.length = 1 + arr.length;
+	o.selectedIndex = 0;
+
+	for(var i=0; i<arr.length; i++)
+	{
+		o.options[ i + 1 ].value = i;
+		o.options[ i + 1 ].text  = arr[ i ].name;
+	}
+	
+}
+
+function calc()
+{
+	var vid  = 1 * elm("vid_vklada").value;
+	var srok = 1 * elm("srok_vklada").value;
+	var summ = 1 * elm("summa").value;
+	var vidstr  = elm("vid_vklada").options[ elm("vid_vklada").selectedIndex ].text;
+
+	if ( vid == 0 )
+	{
+		alert("Не выбран вид вклада");
+		return;
+	}
+
+	if ( srok == 0 )
+	{
+		alert("Не выбран срок вклада");
+		return;
+	}
+
+	if ( summ <= 0 )
+	{
+		alert("Некорректная сумма");
+		return;
+	}                   
+
+
+	var vklad = sroki[ vid ][ srok ];
+	var per_month = ( summ * vklad.prc / 100 ) / 12;
+	var nakopit = per_month * vklad.srok;
+
+	var poluchit = summ + nakopit;
+
+	elm("result").innerHTML = `Вклад "${vidy[vid]}" на срок "${vklad.name}" на сумму ${summ} руб.
+<br/><br/>
+В конце срока вы получите ${poluchit} руб.`;
+
+}
+
+</script>
+
+</head>
+<body>
+<br />
+<br />
+<br />
+<br />
+<table cellpadding="0" cellspacing="10" border="0" align="center">
+<tr>
+	<td><select id="vid_vklada" onchange="setSrok( this.value );">
+		<option value="0">Вид вклада</option>
+		<option value="1">Пополняемый</option>
+		<option value="2">Срочный</option>
+	</select></td>
+	<td id="result" rowspan="4"></td>
+</tr>
+<tr>
+	<td><select id="srok_vklada">
+		<option value="0">Срок вклада</option>
+	</select></td>
+</tr>
+<tr>
+	<td><input type="number" id="summa" placeholder="Сумма, руб" /></td>
+</tr>
+<tr>
+	<td><input type="button" id="go" value="Рассчитать" onclick="calc();" /></td>
+</tr>
+</table>
+
+</body>
+</html>
